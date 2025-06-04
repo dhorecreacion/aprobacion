@@ -1,0 +1,540 @@
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aprobaciones SUM</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    />
+
+    <!-- Firebase SDKs necesarios -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="favicon-aprobacion.ico" />
+
+    <meta name="theme-color" content="#1a3e72" />
+
+    <style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', sans-serif;
+    }
+
+    body {
+        background-color: #f5f6f7;
+        min-height: 100vh;
+        padding: 1rem;
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Contenedor para centrar login */
+    #loginContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+
+    /* Login container */
+    .login-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 360px;
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        animation: fadeIn 0.8s ease-out forwards, slideUp 0.6s ease-out forwards;
+    }
+
+    .login-logo {
+        display: block;
+        margin: 0 auto 0.5rem auto;
+        width: 100px;   /* Tamaño adecuado para el logo */
+        height: auto;
+        object-fit: contain;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(20px); }
+        to { transform: translateY(0); }
+    }
+
+    .login-container h1 {
+        color: #1a3e72;
+        font-size: 1rem;
+        font-weight: 900;
+        margin-bottom: 0.3rem;
+    }
+
+    .login-container p {
+        color: #666;
+        font-size: 0.75rem;
+        font-weight: 400;
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+        font-size: 0.7rem;
+    }
+
+    .input-icon input {
+        width: 100%;
+        padding: 0.7rem 0.7rem 0.7rem 2rem;
+        border: 1px solid #d0d0d0;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 300;
+        transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    .input-icon input:focus {
+        border-color: #1a73e8;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    }
+
+    button {
+        padding: 0.7rem;
+        border: none;
+        border-radius: 10px;
+        background-color: #1a73e8;
+        color: white;
+        font-weight: 400;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+        background-color: #0f5cd9;
+        transform: translateY(-1px);
+    }
+
+    #error {
+        color: #e63946;
+        font-size: 0.75rem;
+        display: none;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    /* Dashboard container */
+    .dashboard {
+        display: none;
+        width: 100%;
+        max-width: 1200px;
+        margin: 2rem auto 3rem auto;
+        padding: 1rem;
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    .dashboard.active {
+        display: block;
+    }
+
+    /* Header del dashboard con título a la izquierda y botón a la derecha */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center; /* Centra verticalmente */
+        margin-bottom: 2rem; /* Más espacio debajo */
+        padding: 0 0.5rem;
+        height: 40px; /* Altura para alinear texto y botón */
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #1a3e72;
+        margin: 0;
+        line-height: 40px; /* Igual a la altura para centrar vertical */
+    }
+
+    .btn-logout {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.75rem;
+        border-radius: 8px;
+        border: none;
+        background-color: #db3a34;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        height: 30px;
+        align-self: center;
+    }
+
+    .btn-logout:hover {
+        background-color: #a92d28;
+    }
+
+    /* Grid para el contenedor de tarjetas */
+    #contenedor {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 columnas fijas */
+        gap: 1rem 1.5rem;
+    }
+
+    /* Compact flight card style más pequeño */
+    .solicitud-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.07);
+        padding: 0.6rem 0.8rem; /* padding más pequeño */
+        margin: 0;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem; /* menos espacio entre elementos */
+        color: #333;
+        font-family: 'Inter', sans-serif;
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
+        font-size: 0.6rem; /* más pequeño */
+        min-height: 150px; /* altura mínima ajustada */
+    }
+
+    .solicitud-card:hover {
+        box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+        transform: translateY(-3px);
+    }
+
+    .solicitud-header {
+        font-weight: 600;
+        font-size: 0.8rem; /* más pequeño */
+        color: #222;
+        margin-bottom: 0.2rem;
+    }
+
+    .solicitud-info {
+        line-height: 1.2;
+        font-size: 0.6rem; /* más pequeño */
+        color: #666;
+        margin-bottom: 0.4rem;
+        justify-content: space-between;
+        display: flex;
+    }
+
+    .solicitud-info .left,
+    .solicitud-info .right {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .solicitud-info strong {
+        color: #111;
+    }
+
+    .solicitud-comentarios {
+        margin-top: 0.2rem;
+        font-size: 0.55rem;
+        color: #999;
+        line-height: 1.2;
+    }
+
+    .solicitud-actions {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .solicitud-actions button {
+        flex: 1;
+        padding: 0.3rem 0;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.55rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .solicitud-actions button i {
+        font-size: 0.9rem;
+    }
+
+    .btn-aprobar {
+        background-color: #0f8e73;
+        color: white;
+    }
+
+    .btn-aprobar:hover {
+        background-color: #0c6d57;
+    }
+
+    .btn-rechazar {
+        background-color: #db3a34;
+        color: white;
+    }
+
+    .btn-rechazar:hover {
+        background-color: #a92d28;
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(245, 246, 247, 0.75);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .loading-overlay .spinner {
+        text-align: center;
+        color: #1a3e72;
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    .loading-overlay .spinner p {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #444;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        #contenedor {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 640px) {
+        #contenedor {
+            grid-template-columns: 1fr;
+        }
+
+        .solicitud-card {
+            font-size: 0.65rem;
+            padding: 0.8rem 1rem;
+            min-height: auto;
+        }
+
+        .solicitud-info {
+            font-size: 0.65rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .solicitud-card {
+            font-size: 0.7rem;
+            padding: 0.8rem 1rem;
+            min-height: auto;
+        }
+    }
+    </style>
+    </head>
+    <body>
+        <div id="loginContainer">
+            <div class="login-container" id="loginContainerInner">
+                <img src="logo-dho.png" alt="Logo" class="login-logo" />
+                <h1>Bienvenido a la Plataforma de Aprobaciones</h1>
+                <p>Inicia sesión con tu cuenta institucional</p>
+                <div class="input-icon">
+                <i class="fas fa-envelope"></i>
+                <input type="text" id="username" placeholder="Correo institucional" />
+                </div>
+                <div class="input-icon">
+                <i class="fas fa-key"></i>
+                <input type="password" id="password" placeholder="Contraseña" />
+                </div>
+                <button onclick="login()">Iniciar sesión</button>
+                <p id="error" style="color:#e63946; font-size:0.85rem; display:none;">Credenciales incorrectas</p>
+            </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div class="dashboard" id="dashboard">
+            <div class="dashboard-header">
+                <h1>Solicitudes Pendientes</h1>
+                <button id="btnLogout" class="btn-logout">Salir</button>
+            </div>
+            <div id="contenedor"></div>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div id="loading" class="loading-overlay">
+            <div class="spinner">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                <p>Cargando solicitudes...</p>
+            </div>
+        </div>
+
+        <script>
+            // ======= JavaScript completo =======
+            const firebaseConfig = {
+            apiKey: "AIzaSyA0Vm3f1NY6OkBwYE3R_8kb_Zd-TuaLkpQ",
+            authDomain: "reservas-da528.firebaseapp.com",
+            databaseURL: "https://reservas-da528-default-rtdb.firebaseio.com",
+            projectId: "reservas-da528",
+            storageBucket: "reservas-da528.appspot.com",
+            messagingSenderId: "693494074553",
+            appId: "1:693494074553:web:42b174110c05cfbd4e9f68"
+            };
+
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.database();
+
+            function login() {
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            const errorText = document.getElementById("error");
+
+            auth.signInWithEmailAndPassword(user, pass)
+                .then(() => {
+                document.getElementById("loginContainer").style.display = "none";
+                document.getElementById("dashboard").classList.add("active");
+                cargarSolicitudes();
+                })
+                .catch(() => {
+                errorText.style.display = "block";
+                errorText.style.opacity = 1;
+                });
+            }
+
+            function crearTarjetaSolicitud(id, solicitud) {
+            const div = document.createElement('div');
+            div.className = 'solicitud-card';
+
+            div.innerHTML = `
+                <div class="solicitud-header">${solicitud.evento}</div>
+                <div class="solicitud-info">
+                <div class="left">
+                    <strong>Fecha:</strong> ${solicitud.fecha} <br>
+                    <strong>Nombre:</strong> ${solicitud.nombre} <br>
+                    <strong>Correo:</strong> ${solicitud.correo}<br>
+                    <strong>Área:</strong> ${solicitud.area || "No especificada"}
+                </div>
+                <div class="right">
+                    <strong>Hora:</strong> ${solicitud.hora}
+                </div>
+                </div>
+                <div class="solicitud-comentarios">${solicitud.comentarios || 'Sin comentarios'}</div>
+                <div class="solicitud-actions">
+                <button class="btn-aprobar"><i class="fas fa-check"></i> Aprobar</button>
+                <button class="btn-rechazar"><i class="fas fa-xmark"></i> Rechazar</button>
+                </div>
+            `;
+
+            div.querySelector('.btn-aprobar').onclick = () => aprobarSolicitud(id, solicitud);
+            div.querySelector('.btn-rechazar').onclick = () => rechazarSolicitud(id, solicitud);
+
+            return div;
+            }
+
+            function cargarSolicitudes() {
+            const contenedor = document.getElementById("contenedor");
+            const loading = document.getElementById("loading");
+
+            contenedor.innerHTML = "";
+            loading.style.display = "flex";
+
+            db.ref("solicitudes").on("value", (snapshot) => {
+                loading.style.display = "none";
+                const datos = snapshot.val();
+                contenedor.innerHTML = "";
+
+                for (let id in datos) {
+                const s = datos[id];
+                if (s.estado === "pendiente") {
+                    const tarjeta = crearTarjetaSolicitud(id, s);
+                    contenedor.appendChild(tarjeta);
+                }
+                }
+            });
+            }
+
+            function aprobarSolicitud(id, solicitud) {
+            db.ref(`solicitudes/${id}/estado`).set('aprobado');
+
+            const url = `https://script.google.com/macros/s/AKfycbwQMDuhbOb_VwAO5E2X7kRx3ocV4zJW9gc1vbnFr6VZh3wL6i7Fsgj0nCs_BupHN09ftw/exec?modo=crear&fecha=${solicitud.fecha}&hora=${solicitud.hora}&duracion=${solicitud.duracion}&evento=${encodeURIComponent(solicitud.evento)}&nombre=${encodeURIComponent(solicitud.nombre)}&correo=${solicitud.correo}&comentarios=${encodeURIComponent(solicitud.comentarios)}&area=${encodeURIComponent(solicitud.area)}`;
+
+            fetch(url)
+                .then(res => res.json())
+                .then(res => {
+                alert('Reserva aprobada y evento creado en Google Calendar');
+                cargarSolicitudes();
+                });
+            }
+
+            function rechazarSolicitud(id, solicitud) {
+            const motivo = prompt("Ingrese el motivo del rechazo:");
+
+            if (motivo === null) return;
+
+            db.ref(`solicitudes/${id}`).update({
+                estado: 'rechazado',
+                motivoRechazo: motivo
+            }).then(() => {
+                alert('Reserva rechazada');
+                const url = `https://script.google.com/macros/s/AKfycbwQMDuhbOb_VwAO5E2X7kRx3ocV4zJW9gc1vbnFr6VZh3wL6i7Fsgj0nCs_BupHN09ftw/exec?modo=rechazar&id=${id}&motivo=${encodeURIComponent(motivo)}`;
+                fetch(url)
+                .then(res => res.json())
+                .then(res => console.log(res))
+                .catch(console.error);
+
+                cargarSolicitudes();
+            }).catch(err => {
+                alert('Error al rechazar: ' + err.message);
+            });
+            }
+
+            document.getElementById('btnLogout').addEventListener('click', () => {
+            auth.signOut()
+                .then(() => {
+                document.getElementById("loginContainer").style.display = "flex";
+                document.getElementById("dashboard").classList.remove("active");
+                document.getElementById("contenedor").innerHTML = "";
+                document.getElementById("username").value = "";
+                document.getElementById("password").value = "";
+                })
+                .catch(error => {
+                alert("Error al cerrar sesión: " + error.message);
+                });
+            });
+
+
+        </script>
+
+    </body>
+</html>

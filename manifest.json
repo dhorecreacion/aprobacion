@@ -1,0 +1,20 @@
+    {
+    "name": "Plataforma de Aprobaciones",
+    "short_name": "Aprobaciones",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#f5f6f7",
+    "theme_color": "#1a3e72",
+    "icons": [
+        {
+        "src": "logo-dho.png",
+        "sizes": "192x192",
+        "type": "image/png"
+        },
+        {
+        "src": "logo-dho.png",
+        "sizes": "512x512",
+        "type": "image/png"
+        }
+    ]
+    }
