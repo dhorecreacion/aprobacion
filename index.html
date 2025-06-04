@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+ <!DOCTYPE html>
     <html lang="es">
     <head>
     <meta charset="UTF-8" />
@@ -17,6 +17,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging-compat.js"></script>
 
     <link rel="manifest" href="manifest.json" />
     <link rel="icon" href="favicon-aprobacion.ico" />
@@ -414,6 +415,43 @@
             firebase.initializeApp(firebaseConfig);
             const auth = firebase.auth();
             const db = firebase.database();
+            const messaging = firebase.messaging();
+
+            // Solicitar permiso y obtener token
+            async function registrarTokenAdmin() {
+                try {
+                const permiso = await Notification.requestPermission();
+                if (permiso !== "granted") {
+                    console.warn("Permiso de notificaciones no concedido");
+                    return;
+                }
+                const token = await messaging.getToken({ vapidKey: 'BMhUFdBdMBSXaiYDqP0SPI9bv0dB4Zobt6xpFg0o3YhJlQjGBGERwOhC2XznlQ9sxjN5mkxsQHIdMrWYvCLIRgo' });
+                console.log("Token FCM admin:", token);
+                
+                // Guardar token en DB bajo tokensAdmins
+                await db.ref('tokensAdmins/' + token).set(true);
+                } catch (error) {
+                console.error("Error al registrar token FCM admin:", error);
+                }
+            }
+
+            registrarTokenAdmin();
+
+            // Escuchar mensajes en primer plano
+            messaging.onMessage(payload => {
+                console.log("Notificación recibida en primer plano:", payload);
+                // Aquí puedes mostrar alerta o actualizar UI
+                alert(`Nueva reserva pendiente: ${payload.notification.title} - ${payload.notification.body}`);
+            });
+
+            // Registrar service worker (asegúrate de tener firebase-messaging-sw.js)
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then(reg => {
+                    messaging.useServiceWorker(reg);
+                    console.log("Service Worker registrado para FCM");
+                });
+            }
 
             function login() {
             const user = document.getElementById("username").value;
@@ -487,7 +525,7 @@
             function aprobarSolicitud(id, solicitud) {
             db.ref(`solicitudes/${id}/estado`).set('aprobado');
 
-            const url = `https://script.google.com/macros/s/AKfycbwQMDuhbOb_VwAO5E2X7kRx3ocV4zJW9gc1vbnFr6VZh3wL6i7Fsgj0nCs_BupHN09ftw/exec?modo=crear&fecha=${solicitud.fecha}&hora=${solicitud.hora}&duracion=${solicitud.duracion}&evento=${encodeURIComponent(solicitud.evento)}&nombre=${encodeURIComponent(solicitud.nombre)}&correo=${solicitud.correo}&comentarios=${encodeURIComponent(solicitud.comentarios)}&area=${encodeURIComponent(solicitud.area)}`;
+            const url = `https://script.google.com/macros/s/AKfycbw-L54ZGL1tBUMXoh2i75xweIHPEeNL4JMQfPb1tRefBkSZVpJ1u3k6OznqZGADsUANzw/exec?modo=crear&fecha=${solicitud.fecha}&hora=${solicitud.hora}&duracion=${solicitud.duracion}&evento=${encodeURIComponent(solicitud.evento)}&nombre=${encodeURIComponent(solicitud.nombre)}&correo=${solicitud.correo}&comentarios=${encodeURIComponent(solicitud.comentarios)}&area=${encodeURIComponent(solicitud.area)}`;
 
             fetch(url)
                 .then(res => res.json())
@@ -507,7 +545,7 @@
                 motivoRechazo: motivo
             }).then(() => {
                 alert('Reserva rechazada');
-                const url = `https://script.google.com/macros/s/AKfycbwQMDuhbOb_VwAO5E2X7kRx3ocV4zJW9gc1vbnFr6VZh3wL6i7Fsgj0nCs_BupHN09ftw/exec?modo=rechazar&id=${id}&motivo=${encodeURIComponent(motivo)}`;
+                const url = `https://script.google.com/macros/s/AKfycbw-L54ZGL1tBUMXoh2i75xweIHPEeNL4JMQfPb1tRefBkSZVpJ1u3k6OznqZGADsUANzw/exec?modo=rechazar&id=${id}&motivo=${encodeURIComponent(motivo)}`;
                 fetch(url)
                 .then(res => res.json())
                 .then(res => console.log(res))
@@ -538,3 +576,4 @@
 
     </body>
 </html>
+
