@@ -454,11 +454,31 @@
 
             // Registrar service worker (asegúrate de tener firebase-messaging-sw.js)
             if ('serviceWorker' in navigator) {
-                 navigator.serviceWorker.register('firebase-messaging-sw.js')
-                .then(registration => {
-                  console.log("Service Worker registrado para FCM con scope:", registration.scope);
+              navigator.serviceWorker.register('firebase-messaging-sw.js')
+                .then((registration) => {
+                  const messaging = firebase.messaging();
+                  messaging.useServiceWorker(registration);
+                  
+                  // Solicitar permiso y obtener token para notificaciones
+                  Notification.requestPermission().then((permission) => {
+                    if (permission === 'granted') {
+                      messaging.getToken({ vapidKey: 'TU_VAPID_KEY' })
+                        .then((token) => {
+                          console.log('Token FCM:', token);
+                          // Guarda el token en tu DB para luego enviar notificaciones
+                        });
+                    }
+                  });
+                  
+                  // Escuchar mensajes en primer plano
+                  messaging.onMessage((payload) => {
+                    console.log('Mensaje recibido en primer plano', payload);
+                    // Mostrar notificación o actualizar UI
+                  });
                 })
-                .catch(err => console.error("Error al registrar Service Worker:", err));
+                .catch((error) => {
+                  console.error('Error al registrar service worker', error);
+                });
             }
 
            function login() {
