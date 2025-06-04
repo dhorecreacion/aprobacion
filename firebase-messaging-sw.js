@@ -1,3 +1,5 @@
+    // firebase-messaging-sw.js
+    
     importScripts('https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js');
     importScripts('https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging-compat.js');
 
@@ -11,13 +13,15 @@
     });
 
     const messaging = firebase.messaging();
-
-    messaging.onBackgroundMessage(payload => {
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
+    
+    messaging.onBackgroundMessage(function(payload) {
+      console.log('[firebase-messaging-sw.js] Received background message ', payload);
+      const notificationTitle = payload.notification.title;
+      const notificationOptions = {
         body: payload.notification.body,
-        icon: '/favicon.ico'  // Puedes cambiar por el icono que quieras
-    };
-
-    self.registration.showNotification(notificationTitle, notificationOptions);
+        icon: '/icono-notificacion.png' // Opcional: pon un icono aquí
+      };
+    
+      self.registration.showNotification(notificationTitle,
+        notificationOptions);
     });
