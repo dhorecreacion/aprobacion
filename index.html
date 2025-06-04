@@ -447,12 +447,12 @@
             // Registrar service worker (asegúrate de tener firebase-messaging-sw.js)
             if ('serviceWorker' in navigator) {
               navigator.serviceWorker.register('firebase-messaging-sw.js')
-                .then(reg => {
-                  messaging.useServiceWorker(reg);
-                  console.log("Service Worker registrado para FCM");
+                .then(registration => {
+                  console.log("Service Worker registrado para FCM con scope:", registration.scope);
                 })
                 .catch(err => console.error("Error al registrar Service Worker:", err));
             }
+
 
             function login() {
             const user = document.getElementById("username").value;
