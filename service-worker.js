@@ -4,7 +4,8 @@
     "/index.html",
     "/manifest.json",
     "/favicon-aprobacion.ico",
-    "/logo-dho.png",
+    "/icon-192.png",
+    "/icon-512.png",
     ];
 
     self.addEventListener("install", event => {
