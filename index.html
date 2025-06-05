@@ -519,8 +519,7 @@
                     errorText.style.opacity = 1;
                 });
             }
-
-                function crearTarjetaSolicitud(id, solicitud) {
+            function crearTarjetaSolicitud(id, solicitud, estado) {
                 const div = document.createElement('div');
                 div.className = 'solicitud-card';
 
@@ -538,43 +537,66 @@
                     </div>
                     </div>
                     <div class="solicitud-comentarios">${solicitud.comentarios || 'Sin comentarios'}</div>
-                    <div class="solicitud-actions">
-                    <button class="btn-aprobar"><i class="fas fa-check"></i> Aprobar</button>
-                    <button class="btn-rechazar"><i class="fas fa-xmark"></i> Rechazar</button>
-                    </div>
+                    ${estado === "rechazado" && solicitud.motivoRechazo ? `
+                    <div class="solicitud-comentarios" style="color:#db3a34; font-weight:600;">
+                        Motivo de rechazo: ${solicitud.motivoRechazo}
+                    </div>` : ''}
                 `;
 
-                div.querySelector('.btn-aprobar').onclick = () => aprobarSolicitud(id, solicitud);
-                div.querySelector('.btn-rechazar').onclick = () => rechazarSolicitud(id, solicitud);
-
-                return div;
+                if (estado === "pendiente") {
+                    const acciones = document.createElement('div');
+                    acciones.className = 'solicitud-actions';
+                    acciones.innerHTML = `
+                    <button class="btn-aprobar"><i class="fas fa-check"></i> Aprobar</button>
+                    <button class="btn-rechazar"><i class="fas fa-xmark"></i> Rechazar</button>
+                    `;
+                    acciones.querySelector('.btn-aprobar').onclick = () => aprobarSolicitud(id, solicitud);
+                    acciones.querySelector('.btn-rechazar').onclick = () => rechazarSolicitud(id, solicitud);
+                    div.appendChild(acciones);
                 }
 
-                function cargarSolicitudes() {
+                return div;
+            }
+
+
+            function cargarSolicitudes() {
                 const contenedor = document.getElementById("contenedor");
                 const loading = document.getElementById("loading");
 
                 contenedor.innerHTML = "";
                 loading.style.display = "flex";
 
-                db.ref("solicitudes").on("value", (snapshot) => {
+                db.ref("solicitudes").once("value", (snapshot) => {
                     loading.style.display = "none";
                     const datos = snapshot.val();
                     contenedor.innerHTML = "";
 
                     const estadoActivo = document.querySelector(".tab-btn.active").dataset.tab;
+                    const solicitudesFiltradas = [];
 
                     for (let id in datos) {
                     const s = datos[id];
                     if (s.estado === estadoActivo) {
-                        const tarjeta = crearTarjetaSolicitud(id, s);
-                        contenedor.appendChild(tarjeta);
+                        solicitudesFiltradas.push({ id, ...s });
                     }
+                    }
+
+                    // Ordenar por fecha y hora
+                    solicitudesFiltradas.sort((a, b) => {
+                    const fechaHoraA = new Date(`${a.fecha} ${a.hora}`);
+                    const fechaHoraB = new Date(`${b.fecha} ${b.hora}`);
+                    return fechaHoraA - fechaHoraB;
+                    });
+
+                    for (const s of solicitudesFiltradas) {
+                    const tarjeta = crearTarjetaSolicitud(s.id, s, estadoActivo);
+                    contenedor.appendChild(tarjeta);
                     }
                 });
-                }
+            }
 
-                function aprobarSolicitud(id, solicitud) {
+
+            function aprobarSolicitud(id, solicitud) {
                 db.ref(`solicitudes/${id}/estado`).set('aprobado');
 
                 const url = `https://script.google.com/macros/s/AKfycbxv4o9FsMHQMh23PpAVOGTD2jaCVgfLIpEB-MBwZLRZsGKsCsXxscJfwfI90sYtOrk97w/exec?modo=crear&fecha=${solicitud.fecha}&hora=${solicitud.hora}&duracion=${solicitud.duracion}&evento=${encodeURIComponent(solicitud.evento)}&nombre=${encodeURIComponent(solicitud.nombre)}&correo=${solicitud.correo}&comentarios=${encodeURIComponent(solicitud.comentarios)}&area=${encodeURIComponent(solicitud.area)}`;
