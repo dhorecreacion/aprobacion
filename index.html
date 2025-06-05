@@ -544,7 +544,7 @@
                 function aprobarSolicitud(id, solicitud) {
                 db.ref(`solicitudes/${id}/estado`).set('aprobado');
 
-                const url = `https://script.google.com/macros/s/AKfycbwiaBt2KDzrWORsxLJEI2VsYA-zdFp4RwUy4BgGbHCKC4V8b5csZ7y0hYAOgRO6ZvmWsg/exec?modo=crear&fecha=${solicitud.fecha}&hora=${solicitud.hora}&duracion=${solicitud.duracion}&evento=${encodeURIComponent(solicitud.evento)}&nombre=${encodeURIComponent(solicitud.nombre)}&correo=${solicitud.correo}&comentarios=${encodeURIComponent(solicitud.comentarios)}&area=${encodeURIComponent(solicitud.area)}`;
+                const url = `https://script.google.com/macros/s/AKfycbxv4o9FsMHQMh23PpAVOGTD2jaCVgfLIpEB-MBwZLRZsGKsCsXxscJfwfI90sYtOrk97w/exec?modo=crear&fecha=${solicitud.fecha}&hora=${solicitud.hora}&duracion=${solicitud.duracion}&evento=${encodeURIComponent(solicitud.evento)}&nombre=${encodeURIComponent(solicitud.nombre)}&correo=${solicitud.correo}&comentarios=${encodeURIComponent(solicitud.comentarios)}&area=${encodeURIComponent(solicitud.area)}`;
 
                 fetch(url)
                     .then(res => res.json())
@@ -564,7 +564,7 @@
                     motivoRechazo: motivo
                 }).then(() => {
                     alert('Reserva rechazada');
-                    const url = `https://script.google.com/macros/s/AKfycbwiaBt2KDzrWORsxLJEI2VsYA-zdFp4RwUy4BgGbHCKC4V8b5csZ7y0hYAOgRO6ZvmWsg/exec?modo=rechazar&id=${id}&motivo=${encodeURIComponent(motivo)}`;
+                    const url = `https://script.google.com/macros/s/AKfycbxv4o9FsMHQMh23PpAVOGTD2jaCVgfLIpEB-MBwZLRZsGKsCsXxscJfwfI90sYtOrk97w/exec?modo=rechazar&id=${id}&motivo=${encodeURIComponent(motivo)}`;
                     fetch(url)
                     .then(res => res.json())
                     .then(res => console.log(res))
