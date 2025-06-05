@@ -10,165 +10,96 @@
     <link rel="icon" href="favicon-aprobacion.ico" />
 
     <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
-    body {
-      background: linear-gradient(180deg, #f4f7fb 0%, #e4ebf5 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 1rem;
-    }
-    .dashboard {
-      width: 100%;
-      max-width: 960px;
-      display: flex;
-      flex-direction: column;
-      margin-top: 3vh;
-    }
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: white;
-      border-radius: 14px;
-      padding: 0.6rem 1rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-    .dashboard-header h2 {
-      color: #1a3e72;
-      font-size: 1rem;
-    }
-    .logout-btn {
-      background: transparent;
-      color: #1a73e8;
-      border: 1px solid #1a73e8;
-      padding: 0.25rem 0.8rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .logout-btn:hover {
-      background: #1a73e8;
-      color: white;
-    }
-    .tab-bar {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      margin: 1rem 0 0.5rem;
-    }
-    .tab {
-      padding: 0.3rem 1rem;
-      border-radius: 8px;
-      background: #f0f4fa;
-      color: #1a3e72;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .tab.active {
-      color: white;
-    }
-    .tab-pendiente.active {
-      background: #1a73e8;
-    }
-    .tab-aprobado.active {
-      background: #2ecc71;
-    }
-    .tab-rechazado.active {
-      background: #e74c3c;
-    }
-    .cards {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
-      margin-top: 0.5rem;
-    }
-    .card-solicitud {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      background: white;
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-      font-size: 0.75rem;
-      transition: all 0.3s ease;
-    }
-    .card-solicitud:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-    }
-    .card-icon {
-      font-size: 1.5rem;
-      margin-top: 0.2rem;
-    }
-    .card-content {
-      flex: 1;
-    }
-    .card-content h3 {
-      font-size: 0.85rem;
-      margin-bottom: 0.3rem;
-      color: #1a3e72;
-    }
-    .card-content p {
-      margin: 0.2rem 0;
-      color: #444;
-      font-size: 0.75rem;
-    }
-    .card-solicitud.aprobado {
-      border-left: 3px solid #2ecc71;
-      background: #f0fff4;
-    }
-    .card-solicitud.rechazado {
-      border-left: 3px solid #e74c3c;
-      background: #fff5f5;
-    }
-    .card-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.4rem;
-      margin-top: 0.6rem;
-    }
-    .btn-aprobar,
-    .btn-rechazar {
-      padding: 0.35rem 0.7rem;
-      font-size: 0.7rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .btn-aprobar {
-      background: #2ecc71;
-      color: white;
-    }
-    .btn-rechazar {
-      background: #e74c3c;
-      color: white;
-    }
-    footer {
-      margin-top: 2rem;
-      font-size: 0.65rem;
-      color: #888;
-      text-align: center;
-    }
-  </style>
-
-
+        * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', sans-serif;
+        }
+        body {
+        background: linear-gradient(180deg, #f4f7fb 0%, #e4ebf5 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        }
+        .login-box {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 360px;
+        padding: 2rem;
+        text-align: center;
+        }
+        .login-box h1 {
+        font-size: 1.3rem;
+        color: #1a3e72;
+        margin-bottom: 0.5rem;
+        }
+        .login-box p {
+        font-size: 0.85rem;
+        color: #555;
+        margin-bottom: 1.5rem;
+        }
+        .input-group {
+        position: relative;
+        margin-bottom: 1rem;
+        }
+        .input-group i {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        transform: translateY(-50%);
+        color: #999;
+        }
+        .input-group input {
+        width: 100%;
+        padding: 0.65rem 0.65rem 0.65rem 2.2rem;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background: #f9fbfd;
+        font-size: 0.85rem;
+        }
+        .input-group input:focus {
+        border-color: #1a73e8;
+        background: white;
+        outline: none;
+        }
+        .btn-submit {
+        width: 100%;
+        padding: 0.75rem;
+        border: none;
+        background: #1a73e8;
+        color: white;
+        font-size: 0.85rem;
+        border-radius: 10px;
+        font-weight: 500;
+        cursor: pointer;
+        }
+        .btn-submit:hover {
+        background: #155dc3;
+        }
+        #error {
+        color: #e63946;
+        font-size: 0.75rem;
+        display: none;
+        margin-top: 0.8rem;
+        }
+        footer {
+        margin-top: 2rem;
+        font-size: 0.65rem;
+        color: #888;
+        text-align: center;
+        }
+    </style>
     </head>
     <body>
-    <!-- Login -->
     <div class="login-box" id="loginContainer">
         <h1>Bienvenido</h1>
-        <p>Plataforma web del área de Calidad de Vida para aprobar reservas de la Sala SUM.</p>
+        <p>Plataforma para aprobar reservas del SUM.</p>
         <div class="input-group">
         <i class="fas fa-envelope"></i>
         <input type="text" id="username" placeholder="Correo institucional" />
@@ -180,29 +111,14 @@
         <button class="btn-submit" onclick="login()">Iniciar sesión</button>
         <p id="error">Credenciales incorrectas</p>
     </div>
-
-    <!-- Dashboard -->
-    <div class="dashboard" id="dashboard">
-        <div class="dashboard-header">
-        <h2>Panel de Aprobaciones</h2>
-        <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
-        </div>
-
-        <div class="tab-bar">
-            <div class="tab active" id="tab-pendiente" onclick="cambiarTab('pendiente')">Pendientes (0)</div>
-            <div class="tab" id="tab-aprobado" onclick="cambiarTab('aprobado')">Aprobadas (0)</div>
-            <div class="tab" id="tab-rechazado" onclick="cambiarTab('rechazado')">Rechazadas (0)</div>
-        </div>
-
-        <div class="cards fade" id="contenedor"></div>
-    </div>
-
     <footer>© 2025 — Dirección de Desarrollo Humano y Organizacional</footer>
+    </body>
 
-    <!-- Firebase -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
     <script>
         const firebaseConfig = {
         apiKey: "AIzaSyA0Vm3f1NY6OkBwYE3R_8kb_Zd-TuaLkpQ",
@@ -245,77 +161,62 @@
         function cambiarTab(estado) {
         estadoActual = estado;
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelector(`.tab[onclick*="${estado}"]`).classList.add('active');
-        document.getElementById("contenedor").classList.remove("fade");
-        void document.getElementById("contenedor").offsetWidth; // trigger reflow
-        document.getElementById("contenedor").classList.add("fade");
+        document.getElementById(`tab-${estado}`).classList.add('active');
         cargarSolicitudes();
         }
 
         function cargarSolicitudes() {
-            const contenedor = document.getElementById("contenedor");
-            contenedor.innerHTML = "";
+        const contenedor = document.getElementById("contenedor");
+        contenedor.innerHTML = "";
 
-            // Contadores
-            let countPendiente = 0;
-            let countAprobado = 0;
-            let countRechazado = 0;
+        let countPendiente = 0;
+        let countAprobado = 0;
+        let countRechazado = 0;
 
-            db.ref("solicitudes").once("value", snapshot => {
-                const datos = snapshot.val();
+        db.ref("solicitudes").once("value", snapshot => {
+            const datos = snapshot.val();
+            for (let id in datos) {
+            const s = datos[id];
+            const estado = s.estado;
 
-                for (let id in datos) {
-                const s = datos[id];
-                const estado = s.estado;
+            if (estado === "pendiente") countPendiente++;
+            if (estado === "aprobado") countAprobado++;
+            if (estado === "rechazado") countRechazado++;
 
-                if (estado === "pendiente") countPendiente++;
-                if (estado === "aprobado") countAprobado++;
-                if (estado === "rechazado") countRechazado++;
+            if (estado === estadoActual) {
+                const div = document.createElement("div");
+                div.className = `card-solicitud ${estado}`;
+                div.innerHTML = `
+                <h3>${s.evento}</h3>
+                <p><strong>Fecha:</strong> ${s.fecha}</p>
+                <p><strong>Hora:</strong> ${s.hora}</p>
+                <p><strong>Nombre:</strong> ${s.nombre}</p>
+                <p><strong>Correo:</strong> ${s.correo}</p>
+                <p><strong>Área:</strong> ${s.area || "No especificada"}</p>
+                <p><strong>Comentarios:</strong> ${s.comentarios || "Sin comentarios"}</p>
+                ${estado === "pendiente" ? `
+                    <div class="card-footer">
+                    <button class="btn-aprobar" onclick='aprobarSolicitud("${id}")'>Aprobar</button>
+                    <button class="btn-rechazar" onclick='rechazarSolicitud("${id}")'>Rechazar</button>
+                    </div>` : ""}
+                `;
+                contenedor.appendChild(div);
+            }
+            }
 
-                if (estado === estadoActual) {
-                    let icono = "";
-                    if (estado === "pendiente") {
-                    icono = '<span class="estado-icono"><i class="fas fa-clock"></i></span>';
-                    } else if (estado === "aprobado") {
-                    icono = '<span class="estado-icono"><i class="fas fa-check-circle"></i></span>';
-                    } else if (estado === "rechazado") {
-                    icono = '<span class="estado-icono"><i class="fas fa-times-circle"></i></span>';
-                    }
-
-                    const div = document.createElement("div");
-                    div.className = `card-solicitud ${estado}`;
-                    div.innerHTML = `
-                    <h3>${icono}${s.evento}</h3>
-                    <p><strong>Fecha:</strong> ${s.fecha}</p>
-                    <p><strong>Hora:</strong> ${s.hora}</p>
-                    <p><strong>Nombre:</strong> ${s.nombre}</p>
-                    <p><strong>Correo:</strong> ${s.correo}</p>
-                    <p><strong>Área:</strong> ${s.area || "No especificada"}</p>
-                    <p><strong>Comentarios:</strong> ${s.comentarios || "Sin comentarios"}</p>
-                    ${estado === "pendiente" ? `
-                        <div class="card-footer">
-                        <button class="btn-aprobar" onclick='aprobarSolicitud("${id}", ${JSON.stringify(s)})'>Aprobar</button>
-                        <button class="btn-rechazar" onclick='rechazarSolicitud("${id}", ${JSON.stringify(s)})'>Rechazar</button>
-                        </div>` : ""}
-                    `;
-                    contenedor.appendChild(div);
-                }
-                }
-
-                // Actualiza contadores en pestañas
-                document.getElementById("tab-pendiente").innerText = `Pendientes (${countPendiente})`;
-                document.getElementById("tab-aprobado").innerText = `Aprobadas (${countAprobado})`;
-                document.getElementById("tab-rechazado").innerText = `Rechazadas (${countRechazado})`;
-            });
+            document.getElementById("tab-pendiente").innerText = `Pendientes (${countPendiente})`;
+            document.getElementById("tab-aprobado").innerText = `Aprobadas (${countAprobado})`;
+            document.getElementById("tab-rechazado").innerText = `Rechazadas (${countRechazado})`;
+        });
         }
 
-        function aprobarSolicitud(id, s) {
+        function aprobarSolicitud(id) {
         db.ref(`solicitudes/${id}/estado`).set('aprobado');
         alert("Reserva aprobada");
         cargarSolicitudes();
         }
 
-        function rechazarSolicitud(id, s) {
+        function rechazarSolicitud(id) {
         const motivo = prompt("Ingrese el motivo del rechazo:");
         if (!motivo) return;
         db.ref(`solicitudes/${id}`).update({ estado: 'rechazado', motivoRechazo: motivo });
