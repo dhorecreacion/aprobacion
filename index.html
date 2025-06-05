@@ -6,9 +6,10 @@
     <title>Plataforma de Aprobaciones SUM</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
     <link rel="icon" href="favicon-aprobacion.ico" />
 
-        <style>
+    <style>
     * {
         box-sizing: border-box;
         margin: 0;
@@ -210,6 +211,20 @@
         font-size: 0.9rem;
     }
 
+    .card-solicitud.pendiente {
+        border-left: 4px solid #1a73e8;
+    }
+
+    .card-solicitud.aprobado {
+        border-left: 4px solid #2ecc71;
+        background: #f0fff4;
+    }
+
+    .card-solicitud.rechazado {
+        border-left: 4px solid #e74c3c;
+        background: #fff5f5;
+    }
+
     .card-footer {
         display: flex;
         justify-content: flex-end;
@@ -366,48 +381,60 @@
         }
 
         function cargarSolicitudes() {
-        const contenedor = document.getElementById("contenedor");
-        contenedor.innerHTML = "";
+            const contenedor = document.getElementById("contenedor");
+            contenedor.innerHTML = "";
 
-        // Contadores
-        let countPendiente = 0;
-        let countAprobado = 0;
-        let countRechazado = 0;
+            // Contadores
+            let countPendiente = 0;
+            let countAprobado = 0;
+            let countRechazado = 0;
 
-        db.ref("solicitudes").once("value", snapshot => {
-            const datos = snapshot.val();
+            db.ref("solicitudes").once("value", snapshot => {
+                const datos = snapshot.val();
 
-            for (let id in datos) {
-            const s = datos[id];
-            if (s.estado === "pendiente") countPendiente++;
-            if (s.estado === "aprobado") countAprobado++;
-            if (s.estado === "rechazado") countRechazado++;
+                for (let id in datos) {
+                const s = datos[id];
+                const estado = s.estado;
 
-            if (s.estado === estadoActual) {
-                const div = document.createElement("div");
-                div.className = "card-solicitud";
-                div.innerHTML = `
-                <h3>${s.evento}</h3>
-                <p><strong>Fecha:</strong> ${s.fecha}</p>
-                <p><strong>Hora:</strong> ${s.hora}</p>
-                <p><strong>Nombre:</strong> ${s.nombre}</p>
-                <p><strong>Correo:</strong> ${s.correo}</p>
-                <p><strong>Área:</strong> ${s.area || "No especificada"}</p>
-                <p><strong>Comentarios:</strong> ${s.comentarios || "Sin comentarios"}</p>
-                ${estadoActual === "pendiente" ? `
-                <div class="card-footer">
-                    <button class="btn-aprobar" onclick='aprobarSolicitud("${id}", ${JSON.stringify(s)})'>Aprobar</button>
-                    <button class="btn-rechazar" onclick='rechazarSolicitud("${id}", ${JSON.stringify(s)})'>Rechazar</button>
-                </div>` : ""}
-                `;
-                contenedor.appendChild(div);
-            }
-            }
+                if (estado === "pendiente") countPendiente++;
+                if (estado === "aprobado") countAprobado++;
+                if (estado === "rechazado") countRechazado++;
 
-            document.getElementById("tab-pendiente").innerText = `Pendientes (${countPendiente})`;
-            document.getElementById("tab-aprobado").innerText = `Aprobadas (${countAprobado})`;
-            document.getElementById("tab-rechazado").innerText = `Rechazadas (${countRechazado})`;
-        });
+                if (estado === estadoActual) {
+                    let icono = "";
+                    if (estado === "pendiente") {
+                    icono = '<span class="estado-icono"><i class="fas fa-clock"></i></span>';
+                    } else if (estado === "aprobado") {
+                    icono = '<span class="estado-icono"><i class="fas fa-check-circle"></i></span>';
+                    } else if (estado === "rechazado") {
+                    icono = '<span class="estado-icono"><i class="fas fa-times-circle"></i></span>';
+                    }
+
+                    const div = document.createElement("div");
+                    div.className = `card-solicitud ${estado}`;
+                    div.innerHTML = `
+                    <h3>${icono}${s.evento}</h3>
+                    <p><strong>Fecha:</strong> ${s.fecha}</p>
+                    <p><strong>Hora:</strong> ${s.hora}</p>
+                    <p><strong>Nombre:</strong> ${s.nombre}</p>
+                    <p><strong>Correo:</strong> ${s.correo}</p>
+                    <p><strong>Área:</strong> ${s.area || "No especificada"}</p>
+                    <p><strong>Comentarios:</strong> ${s.comentarios || "Sin comentarios"}</p>
+                    ${estado === "pendiente" ? `
+                        <div class="card-footer">
+                        <button class="btn-aprobar" onclick='aprobarSolicitud("${id}", ${JSON.stringify(s)})'>Aprobar</button>
+                        <button class="btn-rechazar" onclick='rechazarSolicitud("${id}", ${JSON.stringify(s)})'>Rechazar</button>
+                        </div>` : ""}
+                    `;
+                    contenedor.appendChild(div);
+                }
+                }
+
+                // Actualiza contadores en pestañas
+                document.getElementById("tab-pendiente").innerText = `Pendientes (${countPendiente})`;
+                document.getElementById("tab-aprobado").innerText = `Aprobadas (${countAprobado})`;
+                document.getElementById("tab-rechazado").innerText = `Rechazadas (${countRechazado})`;
+            });
         }
 
         function aprobarSolicitud(id, s) {
@@ -426,3 +453,4 @@
     </script>
     </body>
     </html>
+
