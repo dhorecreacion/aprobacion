@@ -354,6 +354,30 @@
                 min-height: auto;
             }
         }
+
+        .tab-selector {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+        background-color: #e0e0e0;
+        border: none;
+        border-radius: 8px;
+        padding: 0.4rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        }
+
+        .tab-btn.active {
+        background-color: #1a3e72;
+        color: white;
+        }
+
         </style>
         </head>
         <body>
@@ -376,11 +400,18 @@
 
                 <!-- Dashboard -->
                 <div class="dashboard" id="dashboard">
-                <div class="dashboard-header">
-                    <h1>Solicitudes Pendientes</h1>
+                    <div class="dashboard-header">
+                    <h1>Panel de Aprobaciones SUM</h1>
                     <button id="btnLogout" class="btn-logout">Salir</button>
-                </div>
-                <div id="contenedor"></div>
+                    </div>
+
+                    <div class="tab-selector">
+                    <button class="tab-btn active" data-tab="pendiente">Pendientes</button>
+                    <button class="tab-btn" data-tab="aprobado">Aprobadas</button>
+                    <button class="tab-btn" data-tab="rechazado">Rechazadas</button>
+                    </div>
+
+                    <div id="contenedor"></div>
                 </div>
 
                 <!-- Loading Overlay -->
@@ -531,9 +562,11 @@
                     const datos = snapshot.val();
                     contenedor.innerHTML = "";
 
+                    const estadoActivo = document.querySelector(".tab-btn.active").dataset.tab;
+
                     for (let id in datos) {
                     const s = datos[id];
-                    if (s.estado === "pendiente") {
+                    if (s.estado === estadoActivo) {
                         const tarjeta = crearTarjetaSolicitud(id, s);
                         contenedor.appendChild(tarjeta);
                     }
@@ -590,9 +623,15 @@
                     });
                 });
 
+                document.querySelectorAll(".tab-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    cargarSolicitudes();
+                });
+                });
 
             </script>
 
         </body>
     </html>
-
